@@ -50,22 +50,22 @@ if (isset($_GET['id'])) {
         $pdo = new PDO($dsn, $user, $password);
 
         // idカラムの値をプレースホルダ（:id）に置き換えたSQL文をあらかじめ用意する
-        $sql_select_product = 'SELECT * FROM books WHERE id = :id';
-        $stmt_select_product = $pdo->prepare($sql_select_product);
+        $sql_select_book = 'SELECT * FROM books WHERE id = :id';
+        $stmt_select_book = $pdo->prepare($sql_select_book);
 
         // bindValue()メソッドを使って実際の値をプレースホルダにバインドする（割り当てる）
-        $stmt_select_product->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
+        $stmt_select_book->bindValue(':id', $_GET['id'], PDO::PARAM_INT);
 
         // SQL文を実行する
-        $stmt_select_product->execute();
+        $stmt_select_book->execute();
 
         // SQL文の実行結果を配列で取得する
         // 補足：1つのレコード（横1行のデータ）のみを取得したい場合、fetch()メソッドを使えばカラム名がキーになった1次元配列を取得できる    
-        $product = $stmt_select_product->fetch(PDO::FETCH_ASSOC);
+        $book = $stmt_select_book->fetch(PDO::FETCH_ASSOC);
 
         // idパラメータの値と同じidのデータが存在しない場合はエラーメッセージを表示して処理を終了する
         // 補足：fetch()メソッドは実行結果が取得できなかった場合にFALSEを返す
-        if ($product === FALSE) {
+        if ($book === FALSE) {
             exit('idパラメータの値が不正です。');
         }
 
@@ -117,16 +117,16 @@ if (isset($_GET['id'])) {
             <form action="update.php?id=<?= $_GET['id'] ?>" method="post" class="registration-form">
                 <div>
                     <label for="book_code">書籍コード</label>
-                    <input type="number" id="book_code" name="book_code" value="<?= $product['book_code'] ?>" min="0" max="100000000" required>
+                    <input type="number" id="book_code" name="book_code" value="<?= $book['book_code'] ?>" min="0" max="100000000" required>
 
                     <label for="book_name">書籍名</label>
-                    <input type="text" id="book_name" name="book_name" value="<?= $product['book_name'] ?>" maxlength="50" required>
+                    <input type="text" id="book_name" name="book_name" value="<?= $book['book_name'] ?>" maxlength="50" required>
 
                     <label for="price">単価</label>
-                    <input type="number" id="price" name="price" value="<?= $product['price'] ?>" min="0" max="100000000" required>
+                    <input type="number" id="price" name="price" value="<?= $book['price'] ?>" min="0" max="100000000" required>
 
                     <label for="stock_quantity">在庫数</label>
-                    <input type="number" id="stock_quantity" name="stock_quantity" value="<?= $product['stock_quantity'] ?>" min="0" max="100000000" required>
+                    <input type="number" id="stock_quantity" name="stock_quantity" value="<?= $book['stock_quantity'] ?>" min="0" max="100000000" required>
 
                     <label for="genre_code">ジャンルコード</label>
                     <select id="genre_code" name="genre_code" required>
@@ -135,7 +135,7 @@ if (isset($_GET['id'])) {
                         // 配列の中身を順番に取り出し、セレクトボックスの選択肢として出力する
                         foreach ($genre_codes as $genre_code) {
                             // もし変数$genre_codeが書籍のジャンルコードの値と一致していれば、selected属性をつけて初期値にする
-                            if ($genre_code === $product['genre_code']) {
+                            if ($genre_code === $book['genre_code']) {
                                 echo "<option value='{$genre_code}' selected>{$genre_code}</option>";
                             } else {
                                 echo "<option value='{$genre_code}'>{$genre_code}</option>";
